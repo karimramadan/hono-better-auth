@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
+import { BAD_REQUEST } from "@/helpers/http-status-codes";
 
 export const createPostSchema = z
   .object({
@@ -17,7 +18,7 @@ export const createPostValidator = zValidator(
         {
           errors: result.error.issues.map((issue) => issue.message),
         },
-        400
+        BAD_REQUEST
       );
     }
   }

@@ -1,9 +1,10 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { auth } from "@/lib/auth";
+import { ACCEPTED } from "@/helpers/http-status-codes";
 
 // Routes
-import { post } from "@/routes/post";
+import { authRoute } from "@/routes/auth";
+import { postRoute } from "@/routes/post";
 
 const app = new Hono();
 
@@ -19,11 +20,13 @@ app.use(
   })
 );
 
-app
-  .on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw))
-  .route("/api/post", post)
-  .get("/", (c) => {
-    return c.text("Hello Hono!");
-  });
+// Health check route
+app.get("/health", (c) => {
+  return c.text("Ok!", ACCEPTED);
+});
+
+// Register routes
+app.route("/api/auth", authRoute);
+app.route("/api/post", postRoute);
 
 export default app;

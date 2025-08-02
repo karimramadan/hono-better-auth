@@ -3,12 +3,13 @@ import { authMiddleware } from "@/middlewares/auth";
 import { getPostsByUserId, createPost } from "@/services/posts";
 import type { HonoEnv } from "@/types/hono";
 import { createPostValidator } from "@/validators/create-post.validator";
+import { INTERNAL_SERVER_ERROR, CREATED } from "@/helpers/http-status-codes";
 
-export const post = new Hono<HonoEnv>();
+export const postRoute = new Hono<HonoEnv>();
 
-post.use(authMiddleware);
+postRoute.use(authMiddleware);
 
-post.get("/", async (c) => {
+postRoute.get("/", async (c) => {
   const user = c.get("user");
 
   try {
@@ -16,11 +17,11 @@ post.get("/", async (c) => {
     return c.json(postList);
   } catch (error) {
     console.error("Error fetching posts: ", error);
-    return c.json({ error: "Failed to fetch posts" }, 500);
+    return c.json({ error: "Failed to fetch posts" }, INTERNAL_SERVER_ERROR);
   }
 });
 
-post.post("/", createPostValidator, async (c) => {
+postRoute.post("/", createPostValidator, async (c) => {
   const user = c.get("user");
   const postData = c.req.valid("json");
 
@@ -29,9 +30,9 @@ post.post("/", createPostValidator, async (c) => {
       ...postData,
       userId: user.id,
     });
-    return c.json(newPost, 201);
+    return c.json(newPost, CREATED);
   } catch (error) {
     console.error("Error creating post: ", error);
-    return c.json({ error: "Failed to create post" }, 500);
+    return c.json({ error: "Failed to create post" }, INTERNAL_SERVER_ERROR);
   }
 });
