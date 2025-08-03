@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { authMiddleware } from "@/middlewares/auth";
 import { getPostsByUserId, createPost } from "@/services/posts";
 import type { HonoEnv } from "@/types/hono";
-import { createPostValidator } from "@/validators/create-post.validator";
+import { createPostValidator } from "@/validators/create-post";
 import { INTERNAL_SERVER_ERROR, CREATED } from "@/helpers/http-status-codes";
 
 export const postRoute = new Hono<HonoEnv>();
